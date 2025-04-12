@@ -1,0 +1,29 @@
+#!/bin/bash
+
+if ! command -v go &> /dev/null; then
+    echo "❌ Go is not installed or not in PATH."
+    exit 1
+fi
+
+if ! command -v jq &> /dev/null; then
+    echo "❌ 'jq' is required but not found. Please install jq."
+    exit 1
+fi
+
+branch_name=$(git rev-parse --abbrev-ref HEAD)
+modules=$(go list -m -json | jq -r '.Dir' | xargs -n1 basename)
+
+for module in $modules; do
+  if [[ "$branch_name" == "$module/"* ]]; then
+    exit 0
+  fi
+done
+
+echo "❌ Commit blocked: branch name '$branch_name' is not valid."
+echo "➡️ Branch name must start with one of the modules:"
+
+for module in $modules; do
+  echo "  - $module/"
+done
+
+exit 1

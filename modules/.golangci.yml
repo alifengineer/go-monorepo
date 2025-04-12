@@ -1,0 +1,200 @@
+linters:
+  disable-all: true
+  enable:
+    - thelper
+    - goimports
+    - importas
+    - tparallel
+    - wastedassign
+    - unparam
+    - prealloc
+    - unconvert
+    - exhaustive
+    - makezero
+    - nakedret
+    - goconst
+    - unused
+    - bodyclose
+    - gocheckcompilerdirectives
+    - staticcheck
+    - wrapcheck
+    - zerologlint
+    - forcetypeassert
+    - rowserrcheck
+    - nolintlint
+    - gosimple
+    - errname
+    - lll
+    - godot
+    - mnd
+    - errcheck
+    - govet
+    - gofmt
+    - misspell
+    - dupl
+    - cyclop
+    - gci
+  fast: false
+
+linters-settings:
+  exhaustive:
+    default-signifies-exhaustive: true
+  gci:
+    # Section configuration to compare against.
+    # Section names are case-insensitive and may contain parameters in ().
+    # The default order of sections is `standard > default > custom > blank > dot > alias > localmodule`,
+    # If `custom-order` is `true`, it follows the order of `sections` option.
+    # Default: ["standard", "default"]
+    sections:
+      - standard # Standard section: captures all standard packages.
+      - default # Default section: captures all other imports.
+      - prefix(github.com/org/project) # Custom section: groups all imports with the specified Prefix.
+      - prefix(github.com/aliftechuz)
+      - blank # Blank section: contains all blank imports. This section is not present unless explicitly enabled.
+      - dot # Dot section: contains all dot imports. This section is not present unless explicitly enabled.
+      - alias # Alias section: contains all alias imports. This section is not present unless explicitly enabled.
+      - localmodule # Local module section: contains all local packages. This section is not present unless explicitly enabled.
+    # Checks that no inline Comments are present.
+    # Default: false
+    no-inline-comments: true
+    # Checks that no prefix Comments(comment lines above an import) are present.
+    # Default: false
+    no-prefix-comments: true
+    # Skip generated files.
+    # Default: true
+    skip-generated: false
+    # Enable custom order of sections.
+    # If `true`, make the section order the same as the order of `sections`.
+    # Default: false
+    custom-order: true
+    # Drops lexical ordering for custom sections.
+    # Default: false
+    no-lex-order: true
+  lll:
+    line-length: 120
+    tab-width: 2
+  govet:
+    enable:
+      # Check for missing values after append.
+      - appends
+      # Report mismatches between assembly files and Go declarations.
+      - asmdecl
+      # Check for useless assignments.
+      - assign
+      # Check for common mistakes using the sync/atomic package.
+      - atomic
+      # Check for non-64-bits-aligned arguments to sync/atomic functions.
+      - atomicalign
+      # Check for common mistakes involving boolean operators.
+      - bools
+      # Check //go:build and // +build directives.
+      - buildtag
+      # Detect some violations of the cgo pointer passing rules.
+      - cgocall
+      # Check for unkeyed composite literals.
+      - composites
+      # Check for locks erroneously passed by value.
+      - copylocks
+      # Check for calls of reflect.DeepEqual on error values.
+      - deepequalerrors
+      # Report common mistakes in defer statements.
+      - defers
+      # Check Go toolchain directives such as //go:debug.
+      - directive
+      # Report passing non-pointer or non-error values to errors.As.
+      - errorsas
+      # Find structs that would use less memory if their fields were sorted.
+      - fieldalignment
+      # Find calls to a particular function.
+      - findcall
+      # Report assembly that clobbers the frame pointer before saving it.
+      - framepointer
+      # Check for mistakes using HTTP responses.
+      - httpresponse
+      # Detect impossible interface-to-interface type assertions.
+      - ifaceassert
+      # Check references to loop variables from within nested functions.
+      - loopclosure
+      # Check cancel func returned by context.WithCancel is called.
+      - lostcancel
+      # Check for useless comparisons between functions and nil.
+      - nilfunc
+      # Check for redundant or impossible nil comparisons.
+      - nilness
+      # Check consistency of Printf format strings and arguments.
+      - printf
+      # Check for comparing reflect.Value values with == or reflect.DeepEqual.
+      - reflectvaluecompare
+      # Check for possible unintended shadowing of variables.
+      - shadow
+      # Check for shifts that equal or exceed the width of the integer.
+      - shift
+      # Check for unbuffered channel of os.Signal.
+      - sigchanyzer
+      # Check for invalid structured logging calls.
+      - slog
+      # Check the argument type of sort.Slice.
+      - sortslice
+      # Check signature of methods of well-known interfaces.
+      - stdmethods
+      # Check for uses of too-new standard library symbols.
+      - stdversion
+      # Check for string(int) conversions.
+      - stringintconv
+      # Check that struct field tags conform to reflect.StructTag.Get.
+      - structtag
+      # Report calls to (*testing.T).Fatal from goroutines started by a test.
+      - testinggoroutine
+      # Check for common mistaken usages of tests and examples.
+      - tests
+      # Check for calls of (time.Time).Format or time.Parse with 2006-02-01.
+      - timeformat
+      # Report passing non-pointer or non-interface values to unmarshal.
+      - unmarshal
+      # Check for unreachable code.
+      - unreachable
+      # Check for invalid conversions of uintptr to unsafe.Pointer.
+      - unsafeptr
+      # Check for unused results of calls to some functions.
+      - unusedresult
+      # Checks for unused writes.
+      - unusedwrite
+      # Checks for misuses of sync.WaitGroup.
+      - waitgroup
+  nakedret:
+    # No naked returns, ever.
+    max-func-lines: 1 # Default: 30
+  errcheck:
+    # Report `a := b.(MyStruct)` when `a, ok := ...` should be.
+    check-type-assertions: true # Default: false
+    # Dont Report skipped checks:`num, _ := strconv.Atoi(numStr)`.
+    check-blank: false
+    # Function to skip.
+    exclude-functions:
+      - (net/http.ResponseWriter).Write
+  gofmt:
+    # simplify code: gofmt with `-s` option, true by default
+    simplify: true
+  misspell:
+    locale: US
+    ignore-words:
+      - cancelled
+  dupl:
+    # tokens count to trigger issue, 150 by default
+    threshold: 100
+
+# Output configuration options
+output:
+  formats:
+    - format: json
+  # Print lines of code with issue.
+  print-issued-lines: true
+  # Print linter name in the end of issue text.
+  print-linter-name: true
+  # Add a prefix to the output file references.
+  path-prefix: ""
+  # Sort results by: filepath, line and column.
+  sort-results: true
+
+run:
+  timeout: 10m
