@@ -3,9 +3,8 @@ on:
   pull_request:
     branches:
       - master
-
-permissions:
-  contents: read
+      - develop
+  workflow_dispatch:
 
 env:
   GO_VERSION: stable
@@ -14,17 +13,59 @@ env:
 jobs:
   detect-modules:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      pull-requests: read
     outputs:
+      auth: ${{ steps.filter.outputs.auth }}
+      orders: ${{ steps.filter.outputs.orders }}
       modules: ${{ steps.set-modules.outputs.modules }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GO_VERSION }}
-      - id: set-modules
-        run: echo "modules=$(go list -m -json | jq -s '.' | jq -c '[.[].Dir]')" >> $GITHUB_OUTPUT
+
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            tezqr:
+              - modules/auth/**/*.go
+            brbcard:
+              - modules/orders/**/*.go
+
+      - name: Set modules
+        id: set-modules
+        run: |
+          echo "📦 Поиск изменённых модулей..."
+          
+          modules=()
+          REPO_ROOT=$(pwd)
+
+          if [[ "${{ steps.filter.outputs.tezqr }}" == "true" ]]; then
+            modules+=("modules/tezqr")
+          fi
+          
+          if [[ "${{ steps.filter.outputs.brbcard }}" == "true" ]]; then
+            modules+=("modules/brbcard")
+          fi
+          
+          if [[ ${#modules[@]} -eq 0 ]]; then
+            echo "📦 Изменённых модулей не найдено"
+            echo "modules=[]" >> $GITHUB_OUTPUT
+          else
+            modules=$(printf '%s\n' "${modules[@]}" | jq -R . | jq -s .)
+            echo "modules=$modules" >> $GITHUB_OUTPUT
+            echo "📦 Изменённые модули: $modules"
+          fi
 
   golangci:
+    if: ${{ needs.detect-modules.outputs.modules != '[]' && needs.detect-modules.outputs.modules != '' }}
+    timeout-minutes: 60
     needs: detect-modules
     runs-on: ubuntu-latest
     strategy:
@@ -32,9 +73,13 @@ jobs:
         modules: ${{ fromJSON(needs.detect-modules.outputs.modules) }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GO_VERSION }}
+          cache-dependency-path: |
+            ./go.sum
 
       - name: Verify dependencies
         run: go mod verify
