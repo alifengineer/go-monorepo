@@ -1,5 +1,1 @@
 package orders
-
-func main() {
-
-}
