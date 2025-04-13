@@ -33,9 +33,9 @@ jobs:
         id: filter
         with:
           filters: |
-            tezqr:
+            auth:
               - modules/auth/**/*.go
-            brbcard:
+            orders:
               - modules/orders/**/*.go
 
       - name: Set modules
@@ -46,12 +46,12 @@ jobs:
           modules=()
           REPO_ROOT=$(pwd)
 
-          if [[ "${{ steps.filter.outputs.tezqr }}" == "true" ]]; then
-            modules+=("modules/tezqr")
+          if [[ "${{ steps.filter.outputs.auth }}" == "true" ]]; then
+            modules+=("modules/auth")
           fi
           
-          if [[ "${{ steps.filter.outputs.brbcard }}" == "true" ]]; then
-            modules+=("modules/brbcard")
+          if [[ "${{ steps.filter.outputs.orders }}" == "true" ]]; then
+            modules+=("modules/orders")
           fi
           
           if [[ ${#modules[@]} -eq 0 ]]; then
