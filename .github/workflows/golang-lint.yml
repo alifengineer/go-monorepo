@@ -60,7 +60,7 @@ jobs:
             echo "📦 Изменённых модулей не найдено"
             echo "modules=[]" >> $GITHUB_OUTPUT
           else
-            modules=$(printf '%s\n' "${modules[@]}" | jq -R . | jq -s .)
+            modules=$(printf '%s\n' "${modules[@]}" | jq -R . | jq -s . | jq -c '.')
             echo "modules=$modules" >> $GITHUB_OUTPUT
             echo "📦 Изменённые модули: $modules"
           fi
