@@ -47,11 +47,11 @@ jobs:
           REPO_ROOT=$(pwd)/modules
           
           if [[ "${{ steps.filter.outputs.auth }}" == "true" ]]; then
-            modules+=("$REPO_ROOT/auth")
+            modules+=("modules/auth")
           fi
           
           if [[ "${{ steps.filter.outputs.orders }}" == "true" ]]; then
-            modules+=("$REPO_ROOT/orders")
+            modules+=("modules/orders")
           fi
           
           if [[ ${#modules[@]} -eq 0 ]]; then
