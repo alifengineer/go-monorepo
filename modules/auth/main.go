@@ -1,5 +1,1 @@
 package auth
-
-func main() {
-
-}
