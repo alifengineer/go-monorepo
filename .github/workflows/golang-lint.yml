@@ -44,7 +44,7 @@ jobs:
           echo "📦 Поиск изменённых модулей..."
           
           modules=()
-          REPO_ROOT=$(pwd)
+          REPO_ROOT=$(pwd)/modules
 
           if [[ "${{ steps.filter.outputs.auth }}" == "true" ]]; then
             modules+=("$REPO_ROOT/auth")
