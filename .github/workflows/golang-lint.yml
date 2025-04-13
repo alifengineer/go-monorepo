@@ -46,8 +46,6 @@ jobs:
           modules=()
           REPO_ROOT=$(pwd)/modules
           
-          echo $(go list -m -json | jq -s '.' | jq -c '[.[].Dir]')
-
           if [[ "${{ steps.filter.outputs.auth }}" == "true" ]]; then
             modules+=("$REPO_ROOT/auth")
           fi
