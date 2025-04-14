@@ -42,29 +42,25 @@ jobs:
         id: set-modules
         run: |
           echo "📦 Поиск изменённых модулей..."
-          
           modules=()
-          REPO_ROOT=$(pwd)/modules
           
           if [[ "${{ steps.filter.outputs.auth }}" == "true" ]]; then
             modules+=("modules/auth")
           fi
-          
           if [[ "${{ steps.filter.outputs.orders }}" == "true" ]]; then
             modules+=("modules/orders")
           fi
           
-          if [[ ${#modules[@]} -eq 0 ]]; then
-            echo "📦 Изменённых модулей не найдено"
-            echo "modules=[]" >> $GITHUB_OUTPUT
-          else
+          if [[ ${#modules[@]} -ne 0 ]]; then
             modules=$(printf '%s\n' "${modules[@]}" | jq -R . | jq -s . | jq -c '.')
-            echo "modules=$modules" >> $GITHUB_OUTPUT
-            echo "📦 Изменённые модули: $modules"
           fi
+          
+          echo "modules=$modules" >> $GITHUB_OUTPUT
+          echo "📦 Изменённые модули: $modules"
 
   golangci:
-    if: ${{ needs.detect-modules.outputs.modules != '[]' && needs.detect-modules.outputs.modules != '' }}
+    if: ${{ needs.detect-modules.outputs.modules != '' }}
+
     timeout-minutes: 60
     needs: detect-modules
     runs-on: ubuntu-latest
