@@ -42,14 +42,11 @@ jobs:
         id: set-modules
         run: |
           echo "📦 Поиск изменённых модулей..."
-          
           modules=()
-          REPO_ROOT=$(pwd)/modules
           
           if [[ "${{ steps.filter.outputs.auth }}" == "true" ]]; then
             modules+=("modules/auth")
           fi
-          
           if [[ "${{ steps.filter.outputs.orders }}" == "true" ]]; then
             modules+=("modules/orders")
           fi
