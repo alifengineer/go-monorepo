@@ -60,6 +60,7 @@ jobs:
 
   golangci:
     if: ${{ needs.detect-modules.outputs.modules != '' }}
+
     timeout-minutes: 60
     needs: detect-modules
     runs-on: ubuntu-latest
